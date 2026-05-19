@@ -1,0 +1,17 @@
+/vendor/
+/.idea/
+/.vscode/
+/node_modules/
+
+.env
+.env.local
+
+/docker/mysql/data/
+
+var/cache/
+var/log/
+
+composer.lock
+
+.DS_Store
+Thumbs.db
