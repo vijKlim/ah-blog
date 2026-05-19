@@ -8,12 +8,12 @@ use App\Http\Response;
 
 final class Router
 {
-    public function dispatch(Request $request): Response
+    public function dispatch(Request $request): array
     {
         $path = parse_url($request->uri, PHP_URL_PATH);
 
         return match ($path) {
-            '/' => (new HomeController())->index(),
+            '/' => [HomeController::class, 'index'],
             default => new Response('Page not found', 404),
         };
     }
