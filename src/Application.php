@@ -2,10 +2,15 @@
 
 namespace App;
 
+use App\Http\Request;
+use App\Http\Response;
+
 final class Application
 {
-    public function run(): void
+    public function run(): Response
     {
-        echo 'Hello World!';
+        $request = Request::createFromGlobals();
+        $router = new Router();
+        return $router->dispatch($request);
     }
 }
