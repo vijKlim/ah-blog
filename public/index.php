@@ -5,4 +5,5 @@ use App\Application;
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = new Application();
-$app->run();
+$response = $app->run();
+$response->send();
