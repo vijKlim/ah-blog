@@ -1,7 +1,7 @@
 {extends file="base.tpl"}
 
 {block name="content"}
-    <article class="article-page card">
+    <article class="article-page">
         {if $article->image}
             <img
                     src="{$article->image|escape}"
@@ -12,8 +12,8 @@
 
         <div class="article-content">
             <div class="article-meta">
-                <span>Views: {$article->views}</span>
-                <span>Published: {$article->createdAt|escape}</span>
+                <span>{$article->createdAt|escape}</span>
+                <span>{$article->views} views</span>
             </div>
 
             <h1>{$article->title|escape}</h1>
@@ -29,25 +29,39 @@
     </article>
 
     <section class="related-section">
-        <h2>Related articles</h2>
+        <div class="related-header">
+            <h2>Related articles</h2>
+        </div>
 
         {if $relatedArticles|count > 0}
-            <div class="article-grid">
+            <div class="related-grid">
                 {foreach $relatedArticles as $relatedArticle}
-                    <a href="/article?id={$relatedArticle->id}" class="related-card card">
+                    <article class="related-post">
                         {if $relatedArticle->image}
-                            <img
-                                    src="{$relatedArticle->image|escape}"
-                                    alt="{$relatedArticle->title|escape}"
-                            >
+                            <a href="/article?id={$relatedArticle->id}">
+                                <img
+                                        src="{$relatedArticle->image|escape}"
+                                        alt="{$relatedArticle->title|escape}"
+                                >
+                            </a>
                         {/if}
 
-                        <div class="related-card-content">
-                            <span class="article-meta">Views: {$relatedArticle->views}</span>
-                            <h3>{$relatedArticle->title|escape}</h3>
-                            <p>{$relatedArticle->description|escape}</p>
+                        <h3>
+                            <a href="/article?id={$relatedArticle->id}">
+                                {$relatedArticle->title|escape}
+                            </a>
+                        </h3>
+
+                        <div class="article-meta">
+                            <span>{$relatedArticle->views} views</span>
                         </div>
-                    </a>
+
+                        <p>{$relatedArticle->description|truncate:140}</p>
+
+                        <a href="/article?id={$relatedArticle->id}" class="read-more">
+                            Continue Reading
+                        </a>
+                    </article>
                 {/foreach}
             </div>
         {else}
