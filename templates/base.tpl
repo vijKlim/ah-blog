@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{$title|default:'Blog'}</title>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <title>{$title|default:'Blogly'}</title>
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <header class="site-header">
-    <div class="container header-inner">
-        <a href="/" class="logo">AH Blog</a>
-
-        <nav class="navigation">
-            <a href="/">Home</a>
-        </nav>
+    <div class="container">
+        <a href="/" class="logo">Blogly.</a>
     </div>
 </header>
 
@@ -22,7 +18,7 @@
 
 <footer class="site-footer">
     <div class="container">
-        Test blog application
+        Copyright ©2026. All Rights Reserved.
     </div>
 </footer>
 </body>

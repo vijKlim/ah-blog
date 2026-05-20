@@ -1,0 +1,52 @@
+@use 'variables';
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: variables.$background;
+  color: variables.$text-primary;
+}
+
+a {
+  color: inherit;
+}
+
+.container {
+  width: min(
+  variables.$container-width,
+  calc(100% - 40px)
+  );
+
+  margin: 0 auto;
+}
+
+.site-header {
+  background: variables.$primary;
+  padding: variables.$spacing-sm 0;
+}
+
+.logo {
+  color: white;
+  font-size: variables.$font-large;
+  text-decoration: none;
+
+  font-weight: 700;
+}
+
+.main-content {
+  padding: variables.$spacing-2xl 0 variables.$spacing-3xl;
+}
+
+.read-more {
+  color: variables.$primary;
+  font-size: variables.$font-small;
+}
+
+.site-footer {
+  background: variables.$primary;
+  color: white;
+  padding: 64px 0;
+  text-align: center;
+
+  font-size: 11px;
+}

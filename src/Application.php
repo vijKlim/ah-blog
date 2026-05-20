@@ -22,7 +22,7 @@ final class Application
      */
     public function run(): Response
     {
-        Dotenv::createImmutable(__DIR__)->safeLoad();
+        Dotenv::createImmutable(dirname(__DIR__))->safeLoad();
 
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(dirname(__DIR__) . '/config/container.php');

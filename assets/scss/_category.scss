@@ -1,0 +1,151 @@
+@use 'variables';
+
+.category-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: variables.$spacing-lg;
+  margin-bottom: variables.$spacing-xl;
+  padding-bottom: variables.$spacing-lg;
+  border-bottom: 1px solid variables.$border;
+
+  h1 {
+    margin: 0 0 variables.$spacing-sm;
+    font-size: 34px;
+    font-weight: 700;
+    color: variables.$text-primary;
+  }
+
+  p {
+    max-width: 680px;
+    margin: 0;
+    color: variables.$text-secondary;
+    line-height: 1.7;
+  }
+
+  span {
+    color: variables.$text-light;
+    font-size: variables.$font-small;
+    white-space: nowrap;
+  }
+}
+
+.category-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: variables.$spacing-xl;
+}
+
+.sort-links {
+  display: flex;
+  gap: variables.$spacing-sm;
+
+  a {
+    padding: 8px 12px;
+    border: 1px solid variables.$border;
+    border-radius: variables.$radius-sm;
+    font-size: variables.$font-small;
+    color: variables.$text-secondary;
+    text-decoration: none;
+    transition: variables.$transition;
+  }
+
+  a:hover,
+  a.active {
+    background: variables.$primary;
+    border-color: variables.$primary;
+    color: #ffffff;
+  }
+}
+
+.category-posts {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-xl;
+}
+
+.category-post {
+  display: flex;
+  gap: variables.$spacing-lg;
+  padding-bottom: variables.$spacing-xl;
+  border-bottom: 1px solid variables.$border;
+}
+
+.category-post-image {
+  flex: 0 0 320px;
+
+  img {
+    width: 100%;
+    height: 210px;
+    display: block;
+    object-fit: cover;
+    border-radius: variables.$radius-sm;
+  }
+}
+
+.category-post-content {
+  flex: 1;
+
+  h2 {
+    margin: variables.$spacing-sm 0;
+    font-size: 24px;
+    line-height: 1.35;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  p {
+    margin: 0 0 variables.$spacing-sm;
+    color: variables.$text-secondary;
+    line-height: 1.7;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: variables.$spacing-xs;
+  margin-top: variables.$spacing-2xl;
+
+  a {
+    min-width: 38px;
+    padding: 9px 12px;
+    border: 1px solid variables.$border;
+    border-radius: variables.$radius-sm;
+    color: variables.$text-secondary;
+    text-align: center;
+    text-decoration: none;
+    transition: variables.$transition;
+  }
+
+  a:hover,
+  a.active {
+    background: variables.$primary;
+    border-color: variables.$primary;
+    color: #ffffff;
+  }
+}
+
+.empty-message {
+  color: variables.$text-secondary;
+}
+
+@media (max-width: 800px) {
+  .category-page-header {
+    flex-direction: column;
+  }
+
+  .category-toolbar {
+    justify-content: flex-start;
+  }
+
+  .category-post {
+    flex-direction: column;
+  }
+
+  .category-post-image {
+    flex: none;
+  }
+}

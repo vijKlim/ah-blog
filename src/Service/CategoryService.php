@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\DTO\Category;
 use App\Repository\CategoryRepository;
 
 class CategoryService
@@ -16,7 +17,7 @@ class CategoryService
         return $this->categoryRepository->findAllWithArticles();
     }
 
-    public function getCategory(int $id): ?array
+    public function getCategory(int $id): ?Category
     {
         return $this->categoryRepository->findById($id);
     }
