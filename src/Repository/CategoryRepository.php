@@ -7,33 +7,56 @@ use PDO;
 
 class CategoryRepository
 {
-    public function __construct(
-    ){
+    use HydrationTrait;
+
+    public function __construct(private readonly PDO $connection)
+    {
     }
 
     public function findAllWithArticles(): array
     {
-        $categories = [];
+        $sql = /** @lang MySQL */'
+            SELECT DISTINCT c.id, c.title, c.description
+            FROM categories c
+            INNER JOIN article_category ac ON ac.category_id = c.id
+            ORDER BY c.title
+        ';
 
-        for ($i = 1; $i <= 15; $i++) {
-            $categories[] = $this->getFakeCategory($i);
-        }
-
-        return $categories;
+        return $this->hydrateList($this->connection->query($sql)->fetchAll());
     }
 
     public function findById(int $id): ?Category
     {
-        return $this->getFakeCategory($id);
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */'
+            SELECT
+                id,
+                title,
+                description
+            FROM categories
+            WHERE id = :id
+            '
+        );
+
+        $statement->execute([
+            'id' => $id,
+        ]);
+
+        $result = $statement->fetch();
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $this->hydrate($result);
     }
 
-    private function getFakeCategory(int $id): Category
+    private function hydrate(array $row): Category
     {
-        $faker = \Faker\Factory::create('ru_RU');
         return new Category(
-            $id,
-            $faker->sentence(4),
-            $faker->paragraph(),
+            id: (int)$row['id'],
+            title: $row['title'],
+            description: $row['description'],
         );
     }
 }

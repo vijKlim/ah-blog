@@ -41,7 +41,15 @@ class ArticleService
 
     public function getArticle(int $articleId): ?Article
     {
-        return $this->articleRepository->findById($articleId);
+        $article =  $this->articleRepository->findById($articleId);
+
+        if ($article === null) {
+            return null;
+        }
+
+        $this->articleRepository->incrementViews($articleId);
+
+        return $article;
     }
 
     public function getRelatedArticles(int $articleId): array

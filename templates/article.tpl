@@ -3,11 +3,7 @@
 {block name="content"}
     <article class="article-page">
         {if $article->image}
-            <img
-                    src="{$article->image|escape}"
-                    alt="{$article->title|escape}"
-                    class="article-image"
-            >
+            <img src="{$article->image|escape}" alt="{$article->title|escape}" class="article-image">
         {/if}
 
         <div class="article-content">
@@ -39,25 +35,18 @@
                     <article class="related-post">
                         {if $relatedArticle->image}
                             <a href="/article?id={$relatedArticle->id}">
-                                <img
-                                        src="{$relatedArticle->image|escape}"
-                                        alt="{$relatedArticle->title|escape}"
-                                >
+                                <img src="{$relatedArticle->image|escape}" alt="{$relatedArticle->title|escape}">
                             </a>
                         {/if}
-
                         <h3>
                             <a href="/article?id={$relatedArticle->id}">
                                 {$relatedArticle->title|escape}
                             </a>
                         </h3>
-
                         <div class="article-meta">
                             <span>{$relatedArticle->views} views</span>
                         </div>
-
                         <p>{$relatedArticle->description|truncate:140}</p>
-
                         <a href="/article?id={$relatedArticle->id}" class="read-more">
                             Continue Reading
                         </a>

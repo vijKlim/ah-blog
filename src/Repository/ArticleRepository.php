@@ -3,35 +3,107 @@
 namespace App\Repository;
 
 use App\DTO\Article;
+use PDO;
 
 class ArticleRepository
 {
+    use HydrationTrait;
+    public function __construct(private readonly PDO $connection)
+    {
+    }
 
     public function findById(int $id): ?Article
     {
-        return $this->getFakeArticle($id);
-    }
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ '
+            SELECT
+                id,
+                title,
+                description,
+                content,
+                created_at,
+                views,
+                image
+            FROM articles
+            WHERE id = :id
+            '
+        );
 
-    public function findRelated(int $articleId): array
-    {
-        $related = [];
+        $statement->execute([
+            'id' => $id,
+        ]);
 
-        for($i = 1; $i <= 5; $i++) {
-            $related[] = $this->getFakeArticle($i);
+        $row = $statement->fetch();
+
+        if ($row === false) {
+            return null;
         }
 
-        return $related;
+        return $this->hydrate($row);
     }
 
-    public function findLatestByCategory(int $categoryId, int $limit): array
+    public function findRelated(int $articleId, int $limit = 3): array
     {
-        $articles = [];
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ '
+            SELECT DISTINCT
+                a.id,
+                a.title,
+                a.description,
+                a.content,
+                a.created_at,
+                a.views,
+                a.image
+            FROM articles a
+            INNER JOIN article_category ac
+                ON ac.article_id = a.id
+            WHERE ac.category_id IN (
+                SELECT category_id
+                FROM article_category
+                WHERE article_id = :source_article_id
+            )
+            AND a.id != :excluded_article_id
+            ORDER BY a.created_at DESC
+            LIMIT :limit
+            '
+        );
 
-        for ($i = 1; $i <= $limit; $i++) {
-            $articles[] = $this->getFakeArticle($i);
-        }
+        $statement->bindValue('source_article_id', $articleId, PDO::PARAM_INT);
+        $statement->bindValue('excluded_article_id', $articleId, PDO::PARAM_INT);
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
 
-        return $articles;
+        return $this->hydrateList($statement->fetchAll());
+    }
+
+    public function findLatestByCategory(
+        int $categoryId,
+        int $limit = 3,
+    ): array {
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ '
+            SELECT
+                a.id,
+                a.title,
+                a.description,
+                a.content,
+                a.created_at,
+                a.views,
+                a.image
+            FROM articles a
+            INNER JOIN article_category ac
+                ON ac.article_id = a.id
+            WHERE ac.category_id = :category_id
+            ORDER BY a.created_at DESC
+            LIMIT :limit
+            '
+        );
+
+        $statement->bindValue('category_id', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $this->hydrateList($statement->fetchAll());
     }
 
     public function findByCategory(
@@ -40,53 +112,80 @@ class ArticleRepository
         int $limit,
         int $offset,
     ): array {
+        $orderBy = match ($sort) {
+            'views' => 'a.views DESC',
+            default => 'a.created_at DESC',
+        };
 
-        $articles = [];
-
-        for ($i = 1; $i <= 100; $i++) {
-            $articles[] = $this->getFakeArticle($i);
-        }
-
-        usort(
-            $articles,
-            function (Article $left, Article $right) use ($sort): int {
-
-                return match ($sort) {
-
-                    'views' =>
-                        $right->views <=> $left->views,
-
-                    default =>
-                        strtotime($right->createdAt)
-                        <=>
-                        strtotime($left->createdAt),
-                };
-            }
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ "
+            SELECT
+                a.id,
+                a.title,
+                a.description,
+                a.content,
+                a.created_at,
+                a.views,
+                a.image
+            FROM articles a
+            INNER JOIN article_category ac
+                ON ac.article_id = a.id
+            WHERE ac.category_id = :category_id
+            ORDER BY {$orderBy}
+            LIMIT :limit OFFSET :offset
+            "
         );
 
-        return array_slice(
-            $articles,
-            $offset,
-            $limit,
-        );
+        $statement->bindValue('category_id', $categoryId, PDO::PARAM_INT);
+        $statement->bindValue('limit', $limit, PDO::PARAM_INT);
+        $statement->bindValue('offset', $offset, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $this->hydrateList($statement->fetchAll());
     }
 
     public function countByCategory(int $categoryId): int
     {
-        return 100;
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ '
+            SELECT COUNT(*)
+            FROM article_category
+            WHERE category_id = :category_id
+            '
+        );
+
+        $statement->execute([
+            'category_id' => $categoryId,
+        ]);
+
+        return (int) $statement->fetchColumn();
     }
 
-    private function getFakeArticle(int $id): Article
+    public function incrementViews(int $id): void
     {
-        $faker = \Faker\Factory::create('ru_RU');
+        $statement = $this->connection->prepare(
+        /** @lang MySQL */ '
+            UPDATE articles
+            SET views = views + 1
+            WHERE id = :id
+            '
+        );
+
+        $statement->execute([
+            'id' => $id,
+        ]);
+    }
+
+    private function hydrate(array $row): Article
+    {
         return new Article(
-            $id,
-            $faker->sentence(4),
-            $faker->paragraph(),
-            $faker->paragraph(5, true),
-            $faker->dateTimeBetween('-2 months', 'now')->format('Y-m-d H:i:s'),
-            $faker->numberBetween(0, 1000),
-            'https://picsum.photos/800/400?random='. $faker->numberBetween(0, 30)
+            id: (int) $row['id'],
+            title: $row['title'],
+            description: $row['description'],
+            content: $row['content'],
+            createdAt: $row['created_at'],
+            views: (int) $row['views'],
+            image: $row['image'],
         );
     }
 }
