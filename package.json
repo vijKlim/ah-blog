@@ -1,0 +1,16 @@
+{
+  "name": "ah-blog",
+  "version": "1.0.0",
+  "description": "Blog Test: PHP, Mysql, Smarty",
+  "main": "index.js",
+  "scripts": {
+    "scss:build": "sass assets/scss:public/css",
+    "scss:watch": "sass --watch assets/scss:public/css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.99.0"
+  }
+}

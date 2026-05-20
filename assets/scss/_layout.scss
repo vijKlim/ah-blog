@@ -1,0 +1,12 @@
+@use 'variables';
+
+body {
+  margin: 0;
+  background: variables.$background;
+  color: variables.$text;
+}
+
+.container {
+  width: min(variables.$container-width, calc(100% - 32px));
+  margin: 0 auto;
+}
